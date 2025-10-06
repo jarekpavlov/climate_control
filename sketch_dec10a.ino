@@ -1,6 +1,8 @@
 #define but_1 11                      // button 1 / Pin D11
 #define but_2 12                      // button 2 / Pin D12
 
+float humidity;
+float temprature;
 byte sensorPin = 0;
 byte lightSensorPin = 2;		  
 int sensorValue = 0;  
@@ -58,6 +60,10 @@ void setup() {
 
 
 void loop() {
+
+  humidity = aht20.getHumidity();
+  temprature = aht20.getTemperature();
+
   if (lampIsOn) {
     digitalWrite(lampOut, HIGH);
     if (analogRead(lightSensorPin) > 750) {
@@ -101,7 +107,7 @@ void loop() {
     //EEPROM.write(1,rollTrimMiddle/4); 
   }   
 
-  if ((aht20.getHumidity() < minHumidity) && !pumpIsOn && (pauseTime + delayPausePump) < millis()) {
+  if ((humidity < minHumidity) && !pumpIsOn && (pauseTime + delayPausePump) < millis()) {
     pumpIsOn = true;
     startTime = millis();
     pauseTime = 0;
@@ -112,12 +118,12 @@ void loop() {
   display.setTextColor(SSD1306_WHITE);        // Draw white text
   display.setCursor(0,0);
   display.print(F("Hum./Min, %: "));
-  display.print(round(aht20.getHumidity()));
+  display.print(round(humidity));
   display.print("/");
   display.print(minHumidity);
   display.setCursor(0,10);
   display.print(F("Temp., C:     "));
-  display.print(round(aht20.getTemperature()));
+  display.print(round(temprature));
   display.display();
   wdt_reset();
 }
