@@ -1,3 +1,4 @@
+#include <EEPROM.h>
 #define but_1 11                      // button 1 / Pin D11
 #define but_2 12                      // button 2 / Pin D12
 
@@ -6,7 +7,7 @@ float temprature;
 byte sensorPin = 0;
 byte lightSensorPin = 2;		  
 int sensorValue = 0;  
-byte minHumidity = 50;
+byte minHumidity = 0;
 byte pumpOut = 10;
 byte lampOut = 9;
 byte buttonPin = 2;
@@ -55,6 +56,7 @@ void setup() {
     Serial.println("AHT20 not detected. Please check wiring. Freezing.");
     while (1);
   }
+  minHumidity = EEPROM.read(0);
   wdt_enable(WDTO_8S);
 }
 
@@ -94,17 +96,23 @@ void loop() {
     if (minHumidity > 100) {
       minHumidity = 0;
     } 
-    //EEPROM.write(1,rollTrimMiddle/4); 
   }   
 
-    if(digitalRead(but_1)==LOW) {
+  if(digitalRead(but_1)==LOW) {
     if (minHumidity == 0) {
       minHumidity = 100;
     }
     if (minHumidity != 0) {
       minHumidity=minHumidity-1;
     }
-    //EEPROM.write(1,rollTrimMiddle/4); 
+  }   
+
+  if(digitalRead(but_1)==LOW && digitalRead(but_2)==LOW)  {
+    display.setCursor(0,20);
+    EEPROM.write(0, minHumidity);
+    display.print("SAVED");
+    display.display();
+    delay(3000);
   }   
 
   if ((humidity < minHumidity) && !pumpIsOn && (pauseTime + delayPausePump) < millis()) {
