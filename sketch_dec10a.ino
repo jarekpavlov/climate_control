@@ -108,8 +108,10 @@ void loop() {
   }   
 
   if(digitalRead(but_1)==LOW && digitalRead(but_2)==LOW)  {
-    display.setCursor(0,20);
-    EEPROM.write(0, minHumidity);
+    display.setCursor(80,20);
+    if (EEPROM.read(0) != minHumidity) {
+      EEPROM.write(0, minHumidity);
+    }
     display.print("SAVED");
     display.display();
     delay(3000);
