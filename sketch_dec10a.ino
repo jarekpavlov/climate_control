@@ -68,7 +68,7 @@ void loop() {
 
   if (lampIsOn) {
     digitalWrite(lampOut, HIGH);
-    if (analogRead(lightSensorPin) > 760) {
+    if (analogRead(lightSensorPin) > 820) {
       lampIsOn = false;
       digitalWrite(lampOut, LOW);
       lampPauseTime = millis();
@@ -76,7 +76,7 @@ void loop() {
   } else {
     digitalWrite(lampOut, LOW);
   }
-  if (analogRead(lightSensorPin) < 740 && (lampPauseTime + delayPauseLamp) < millis()) {
+  if (analogRead(lightSensorPin) < 760 && (lampPauseTime + delayPauseLamp) < millis()) {
     lampIsOn = true;
   }
 
