@@ -65,10 +65,10 @@ void loop() {
 
   humidity = aht20.getHumidity();
   temprature = aht20.getTemperature();
-
+  Serial.println(analogRead(lightSensorPin));
   if (lampIsOn) {
     digitalWrite(lampOut, HIGH);
-    if (analogRead(lightSensorPin) > 820) {
+    if (analogRead(lightSensorPin) > 860) {
       lampIsOn = false;
       digitalWrite(lampOut, LOW);
       lampPauseTime = millis();
