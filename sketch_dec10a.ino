@@ -19,7 +19,7 @@ unsigned long startTime = 0;
 unsigned long pauseTime = 0;
 bool pumpIsOn = false;
 bool lampIsOn = false;
-int currentButtonRegime = 0;
+bool lampCount = true;
 
 #include <avr/wdt.h>
 #include <AHT20.h>
@@ -65,19 +65,27 @@ void loop() {
 
   humidity = aht20.getHumidity();
   temprature = aht20.getTemperature();
-  Serial.println(analogRead(lightSensorPin));
+
   if (lampIsOn) {
     digitalWrite(lampOut, HIGH);
     if (analogRead(lightSensorPin) > 860) {
-      lampIsOn = false;
-      digitalWrite(lampOut, LOW);
-      lampPauseTime = millis();
+      if (lampCount) {
+        lampPauseTime = millis();
+        lampCount = false;
+      }
+      
+      if (millis() - lampPauseTime > 300000) {
+        lampIsOn = false;
+        digitalWrite(lampOut, LOW);
+      }
     }
   } else {
     digitalWrite(lampOut, LOW);
   }
-  if (analogRead(lightSensorPin) < 760 && (lampPauseTime + delayPauseLamp) < millis()) {
+  if (analogRead(lightSensorPin) < 760) {
+    lampPauseTime = millis();
     lampIsOn = true;
+    lampCount = true;
   }
 
   if (pumpIsOn) {
